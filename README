@@ -1,0 +1,47 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2444
+
+Here is a simple bash script with similar function as "GetLatestVimScripts" plugin (vimscript#642):
+
+    (1) It will check whether a new version of local vim script are released, if it is available, automatically download it to assigned directory, otherwise, nothing will be done;
+    (2) It will update version information of the downloaded files into the list file.
+
+1. Why you need this script?
+ --------------------------------------
+In fact, core algorithm of this script is same with "GetLatestVimScripts". But the "GetLatestVimScripts" need to be run under vim platform, if you want it to be executed by some scheduler (for instance "cron" or "at") in background, it will not work!
+
+Try to launch a shell command as below:
+                               $ ex +"GetLatestVimScripts" &
+and what did you see? Yes, this background job cannot run, not even to run as a cron task.
+
+So, if you are lazy to update your vim plugins manually, and need a program to execute it as a schedule, download and enjoy this script.
+
+2. Usage
+------------
+This is a bash script:
+                         $ ./downloadvimscripts [-o restore_dir] scripts_list_file
+
+NOTE:
+    (1) use option "-o"  to assign a directory to restore your vim scripts. If it is absent, vim scripts will be downloaded to the same directory of "scripts_list_file";
+    (2) "scripts_list_file" has same format of "GetLatestVimScripts.dat";
+    (3) it will check whether the restore_dir is writable before downloading.
+
+3. Format of "scripts_list_file"
+----------------------------------------
+As mentioned above, "scripts_list_file" has same format as "GetLatestVimScripts.dat", it has three fields:
+                                    ScriptID SourceID ScriptName.
+
+where,
+    (1) ScriptID: you'll see it on the top of your browser in its "Location:" box whenever you click on the script at http://vim.sf.net/;
+    (2) SourceID: start it off with a "1"; this script will download the file and keep this entry updated automatically;
+    (3) ScriptName: the name or title of the script (may have spaces, etc).
+
+I've provided an example of "scripts_list_file" in zip package, please research and reconfigure it for yourself.
+
+4. Dependency
+---------------------
+For portability, assure these programs are installed in your system:
+    (1) bash (version >= 3.0)
+    (2) grep
+    (3) sed
+    (4) awk
+    (5) wget or curl
