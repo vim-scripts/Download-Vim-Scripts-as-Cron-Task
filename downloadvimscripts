@@ -1,11 +1,11 @@
 #!/bin/bash
 # Script: downloadvimscripts
 # Author: Frank Sun <frank.sun.319@gmail.com>
-# Date: 11-15-2008
+# Date: 11-19-2008
 # Description: auto-load vim plugins
 # Options:
 #       (1) -o, directory to restore downloaded files. If it is absent, package will be restored to the directory of scripts_list_file.
-# Version: 1.5
+# Version: 1.5.2
 
 max_option_num=3
 usage='usage: downloadvimscripts [-o restore_dir] scripts_list_file'
@@ -31,6 +31,16 @@ if [[ -z $restore_dir ]]; then
     [[ $scripts_list =~ '/' ]] && restore_dir="${1%/*}/" || restore_dir="$(pwd)/"
 fi
 [[ ! -w $restore_dir ]] && { echo "$restore_dir is not writable." ; exit 0; }
+
+# define download tool
+if [[ -f /usr/bin/wget ]]; then
+    downloadtool='wget -q -O'
+elif [[ -f /usr/bin/curl ]]; then
+    downloadtool='curl -s -o'
+else
+    echo 'Both wget and curl are not exist!'
+    exit 0
+fi
 
 # make $items_list file
 items_list='/tmp/'${scripts_list##*/}.tmp
@@ -58,12 +68,12 @@ lineno=3
         script_id=$(echo $line | awk '{print $1}')
         old_src_id=$(echo $line | awk '{print $2}')
         tmpfile='/tmp/'$script_id
-        wget -q $page_prefix$script_id -O $tmpfile
+        $downloadtool $tmpfile $page_prefix$script_id
         tmpline=$(grep 'download_script\.php?src_id' $tmpfile | head -1)
         src_id=$(echo $tmpline | sed 's/^.*download_script\.php?src_id=//' | sed 's/^\([0-9]\+\).*$/\1/')
         if (( $old_src_id < $src_id )); then
             src_name=$(echo $tmpline | sed 's/^\([^>]*>\)\{2\}//' | sed 's/\(<[^>]*>\)\{2\}$//')
-            wget -q $package_prefix$src_id -O $restore_dir$src_name
+            $downloadtool $restore_dir$src_name $page_prefix$src_id
             ex +$lineno's/^\s*\(\d\+ \)\d\+\( .*\)$/\1'$src_id'\2/' +'wq' $scripts_list_bak
         fi
         rm -rf $tmpfile
