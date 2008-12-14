@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script: downloadvimscripts
 # Author: Frank Sun <frank.sun.319@gmail.com>
-# Date: 11-19-2008
+# Date: 12-14-2008
 # Description: auto-load vim plugins
 # Options:
 #       (1) -o, directory to restore downloaded files. If it is absent, package will be restored to the directory of scripts_list_file.
@@ -73,7 +73,7 @@ lineno=3
         src_id=$(echo $tmpline | sed 's/^.*download_script\.php?src_id=//' | sed 's/^\([0-9]\+\).*$/\1/')
         if (( $old_src_id < $src_id )); then
             src_name=$(echo $tmpline | sed 's/^\([^>]*>\)\{2\}//' | sed 's/\(<[^>]*>\)\{2\}$//')
-            $downloadtool $restore_dir$src_name $page_prefix$src_id
+            $downloadtool $restore_dir$src_name $package_prefix$src_id
             ex +$lineno's/^\s*\(\d\+ \)\d\+\( .*\)$/\1'$src_id'\2/' +'wq' $scripts_list_bak
         fi
         rm -rf $tmpfile
